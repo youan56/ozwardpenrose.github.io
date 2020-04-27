@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <meta charset="utf-8">
+    
+    <title>STM32学习笔记2_按键读取 | Cassle Collage</title>
+    
+    
+        <meta name="keywords" content="单片机" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="变量类型在上次实验中，我们用到的函数类型为void，使用到的相关函数变量只有GPIO指针和相对应的GPIO结构体，在进行这个实验之前，我们需要了解STM32的各种变量，方便我们使用和编写各种函数。 STM32中一共有24个变量类型，和普通的C语言的变量不一样，库函数中对这些变量进行了宏定义，我们调用时需要了解这些变量从而进行合理调用。  可以看到，其实32的库函数对各种变量的封装特别合理，命名中还">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STM32学习笔记2_按键读取">
+<meta property="og:url" content="https://ozwardpenrose.github.io/2020/04/02/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02-%E6%8C%89%E9%94%AE%E8%AF%BB%E5%8F%96/index.html">
+<meta property="og:site_name" content="Cassle Collage">
+<meta property="og:description" content="变量类型在上次实验中，我们用到的函数类型为void，使用到的相关函数变量只有GPIO指针和相对应的GPIO结构体，在进行这个实验之前，我们需要了解STM32的各种变量，方便我们使用和编写各种函数。 STM32中一共有24个变量类型，和普通的C语言的变量不一样，库函数中对这些变量进行了宏定义，我们调用时需要了解这些变量从而进行合理调用。  可以看到，其实32的库函数对各种变量的封装特别合理，命名中还">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/02/GY16zT.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/02/GY3w6O.png">
+<meta property="article:published_time" content="2020-04-02T11:06:36.000Z">
+<meta property="article:modified_time" content="2020-04-02T11:16:02.716Z">
+<meta property="article:author" content="OzwardPenrose">
+<meta property="article:tag" content="单片机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/04/02/GY16zT.png">
+    
+
+    
+        <link rel="alternate" href="atom.xml" title="Cassle Collage" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/favicon6.ico" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+	<link rel="stylesheet" href="/js/prism/prism.css">
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">Cassle Collage</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>分类</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linux
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            服务器
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/01/AWS%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BAV2ray%E6%95%99%E7%A8%8B/">AWS服务器搭建V2ray教程</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            虚拟机
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/03/ubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85NS-3/">ubuntu虚拟机安装NS-3</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            专业课程
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/11/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">信息论学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            学习拓展
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/03/Hexo-Github%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%95%99%E7%A8%8B/">Hexo+GitHub博客搭建教程</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            嵌入式
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/02/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01-%E7%82%B9%E4%BA%AELED/">STM32学习笔记1_点亮LED</a></li>  <li class="file active"><a href="/2020/04/02/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02-%E6%8C%89%E9%94%AE%E8%AF%BB%E5%8F%96/">STM32学习笔记2_按键读取</a></li>  <li class="file"><a href="/2020/04/03/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03-%E6%97%B6%E9%92%9F%E8%AE%BE%E7%BD%AE/">STM32学习笔记3_时钟设置</a></li>  <li class="file"><a href="/2020/04/06/%E5%AE%89%E8%A3%85Keil%E6%95%99%E7%A8%8B/">安装Keil教程</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            生活
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/01/%E5%8E%BB%E5%9B%BD%E6%80%80%E4%B9%A1%EF%BC%8C%E5%BF%A7%E9%A6%8B%E7%95%8F%E9%A5%A5/">去国怀乡，忧馋畏饥</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/04/02/index/">Welcome to Penrose's Website</a></li>  <li class="file"><a href="/2020/04/27/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title"><span>归档</span></h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">11</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title"><span>标签</span></h3>
+        <div class="widget">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag">-笔记</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VPN/" rel="tag">VPN</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag">博客</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%8E%AF%E5%A2%83/" rel="tag">环境</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main">
+<article id="post-STM32学习笔记2-按键读取" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/%E8%BD%AF%E4%BB%B6/">软件</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2020/04/02/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02-%E6%8C%89%E9%94%AE%E8%AF%BB%E5%8F%96/">
+            <time datetime="2020-04-02T11:06:36.000Z" itemprop="datePublished">2020-04-02</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            STM32学习笔记2_按键读取
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量类型"><span class="toc-number">1.</span> <span class="toc-text">变量类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按键读取"><span class="toc-number">2.</span> <span class="toc-text">按键读取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">3.</span> <span class="toc-text">参考资料</span></a></li></ol>
+                </div>
+            
+        
+        
+            <h2 id="变量类型"><a href="#变量类型" class="headerlink" title="变量类型"></a>变量类型</h2><p>在上次实验中，我们用到的函数类型为void，使用到的相关函数变量只有GPIO指针和相对应的GPIO结构体，在进行这个实验之前，我们需要了解STM32的各种变量，方便我们使用和编写各种函数。</p>
+<p>STM32中一共有24个变量类型，和普通的C语言的变量不一样，库函数中对这些变量进行了宏定义，我们调用时需要了解这些变量从而进行合理调用。</p>
+<p><img src="https://s1.ax1x.com/2020/04/02/GY16zT.png" alt="24种变量.png"></p>
+<p>可以看到，其实32的库函数对各种变量的封装特别合理，命名中还包含了变量长度，命名中含有const的就是只读权限的变量。</p>
+<h2 id="按键读取"><a href="#按键读取" class="headerlink" title="按键读取"></a>按键读取</h2><p>其实机械按键常有一个问题就是消抖，硬件上常常采用并联电容的方式进行消抖，软件上通常采用时延的方式进行消抖，两种方式达到的目的都是一样的：在按键机械抖动的过程中不出现误判键值和按键状态，本次实验中按键采用了并联一个电容的方式进行消抖，进行了硬件消抖就不引入时延消抖了。</p>
+<p>按键读取中必须记得将引脚设置成浮空输入，关于引脚模式的设置在上一次中已经提及。</p>
+<p>到这个内容，我们需要了解所有与GPIO相关的库函数的用法了，不能只满足于输入输出。</p>
+<p>关于这个我们需要的参考资料叫做《STM32固件库使用手册》，它是固件库编程中必不可少的资料。</p>
+<p>关于GPIO的所有函数说明：</p>
+<p><img src="https://s1.ax1x.com/2020/04/02/GY3w6O.png" alt="GPIO说明.png"></p>
+<p>关注以下读取引脚值的函数即可解决按键读取问题。</p>
+<p>这个内容比较少，代码结构与LED的代码几乎相同。</p>
+<p>代码见Github： <a href="https://github.com/OzwardPenrose/STM32F10x-2" target="_blank" rel="noopener">按键读取</a> </p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><blockquote>
+<ul>
+<li>STM32F103硬件手册</li>
+<li><a href="http://www.stmcu.org.cn/module/forum/thread-615919-1-1.html" target="_blank" rel="noopener">正点原子官方资料</a></li>
+</ul>
+</blockquote>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2020/04/03/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03-%E6%97%B6%E9%92%9F%E8%AE%BE%E7%BD%AE/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    STM32学习笔记3_时钟设置
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2020/04/02/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01-%E7%82%B9%E4%BA%AELED/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">STM32学习笔记1_点亮LED</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            OzwardPenrose &copy; 2020 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+				<script src="/js/prism/prism.js" async></script>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://ozwardpenrose.github.io/2020/04/02/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02-%E6%8C%89%E9%94%AE%E8%AF%BB%E5%8F%96/';
+        
+        this.page.identifier = 'STM32学习笔记2-按键读取';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'http-ozwardpenrose-github-io' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+	
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+	
+</body>
+</html>
