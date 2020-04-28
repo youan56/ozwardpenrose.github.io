@@ -34,8 +34,10 @@
 <meta property="og:image" content="http://yanxuan.nosdn.127.net/4ac87e9c5f6052b0ff171d95f3756ba9.png">
 <meta property="og:image" content="http://yanxuan.nosdn.127.net/a3c273b317f1cd109a1e5b27ff80f5da.png">
 <meta property="og:image" content="http://yanxuan.nosdn.127.net/4ad98dbc479e851fd610acac820d4cdc.png">
+<meta property="og:image" content="http://yanxuan.nosdn.127.net/4cb1b48fecf3570c3b777e0c79ca96b3.png">
+<meta property="og:image" content="http://yanxuan.nosdn.127.net/76fe90aa329cd2ec72571f62e544ecd8.png">
 <meta property="article:published_time" content="2020-04-10T23:56:30.000Z">
-<meta property="article:modified_time" content="2020-04-28T03:11:41.950Z">
+<meta property="article:modified_time" content="2020-04-28T06:43:32.388Z">
 <meta property="article:author" content="OzwardPenrose">
 <meta property="article:tag" content="-笔记">
 <meta name="twitter:card" content="summary">
@@ -678,7 +680,19 @@ R=1-\frac{H_{\infty}}{H_{0}}</script><p>其中H∞为信源实际熵，H0=Hmax�
 <h3 id="连续信源"><a href="#连续信源" class="headerlink" title="连续信源"></a>连续信源</h3><p>对于某一连续信源X(t),当给定某一时刻t=to时，其取值是连续的，即时间和幅度均为连续函数。由于连续信源中消息数是无限的，其每一可能的消息是随机过程的一个样本函数，可以用有限维概率分布函数或有限维概率密度函数来描述连续信源。</p>
 <p><strong>数学模型</strong></p>
 <p><img src="http://yanxuan.nosdn.127.net/4ad98dbc479e851fd610acac820d4cdc.png" alt="UTOOLS1588039961928.png"></p>
-<p>任何一个随机过程都可用一组随机变量来描述，研究连续信源可以首先对单个随机变量情况进行讨论，然后推广到维情况。</p>
+<p>任何一个随机过程都可用一组随机变量来描述，研究连续信源可以首先对单个随机变量情况进行讨论，然后推广到n维情况。</p>
+<p><strong>连续信源的熵</strong></p>
+<p>简单连续信源的模型写作：</p>
+<p><img src="http://yanxuan.nosdn.127.net/4cb1b48fecf3570c3b777e0c79ca96b3.png" alt="UTOOLS1588047119572.png"></p>
+<p>可以改写成离散信源：</p>
+<p><img src="http://yanxuan.nosdn.127.net/76fe90aa329cd2ec72571f62e544ecd8.png" alt="UTOOLS1588047345999.png"></p>
+<p>由积分中值定理得到：</p>
+<script type="math/tex; mode=display">
+p_{i}=\int_{a+(i-1) \Delta x}^{a+i \Delta x} p(x) d x=p\left(x_{i}\right) \Delta x</script><p>离散化后，对连续信源的熵，可以用此离散信源的熵来近似。</p>
+<p>定义连续信源的熵：</p>
+<script type="math/tex; mode=display">
+H(X)=-\int_{-\infty}^{\infty} p(x) \log p(x) d x</script><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、连续信源的熵与离散信源的熵具有相同的形式，但其意义不相同。连续信源熵与离散信源熵相比，去掉了一个无穷项，连续信源的不确定性应为无穷大。</span><br><span class="line"><span class="number">2</span>、由于实际应用中常常关心的是熵之间的差值，无穷项可相互抵消，故这样定义连续信源的熵不会影响讨论所关心的交互信息量、信息容量和率失真函数。</span><br><span class="line"><span class="number">3</span>、需要强调的是连续信源熵的值只是熵的相对值，不是绝对值，而离散信源熵的值是绝对值。</span><br></pre></td></tr></table></figure>
+<p><strong>连续信源的最大熵</strong></p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><blockquote>
 <ul>
 <li>信息论课程PPT——<a href="https://pan.baidu.com/s/1L2Qoz7n8ybcdvTRrG2RAqw" target="_blank" rel="noopener">提取码：pvr0</a></li>
